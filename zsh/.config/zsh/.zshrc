@@ -45,13 +45,10 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups  
 
-setopt notify
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename '$ZDOTDIR/.zshrc'
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' # Command suggestion math uppercase and lowercase letters
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # Completions shows colors like ls --color
 
-# End of lines added by compinstall
-
+alias ls='ls --color'
 alias hx=helix
 alias update="yay && flatpak update"
 
