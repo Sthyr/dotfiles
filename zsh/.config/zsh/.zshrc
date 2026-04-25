@@ -20,6 +20,13 @@ source "${ZINIT_HOME}/zinit.zsh"
 # Add powerlevel10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+
+# Load completions
+autoload -U compinit && compinit
+
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
 HISTSIZE=1000
@@ -30,8 +37,6 @@ bindkey -e
 # The following lines were added by compinstall
 zstyle :compinstall filename '$ZDOTDIR/.zshrc'
 
-autoload -Uz compinit
-compinit
 # End of lines added by compinstall
 
 alias hx=helix
