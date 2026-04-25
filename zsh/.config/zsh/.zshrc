@@ -27,12 +27,25 @@ zinit light zsh-users/zsh-autosuggestions
 # Load completions
 autoload -U compinit && compinit
 
-# Lines configured by zsh-newuser-install
-HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
+# Keybindings
+bindkey -e # Emacs keybindings
+bindkey '^p' history-search-backward # Move history only for current command
+bindkey '^n' history-search-forward
+
+# History
+export HISTFILE="$XDG_STATE_HOME"/zsh/history
+HISTSIZE=5000 # Commands save on history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase # Erase duplicates in history
+setopt appendhistory # appends command to historyu
+setopt sharehistory # Share history across all shell sessions
+setopt hist_ignore_space # If a command starts with a space it is not saved into the history, useful when using confidential info
+setopt hist_ignore_all_dups # Ignore all duplicates
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups  
+
 setopt notify
-bindkey -e
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '$ZDOTDIR/.zshrc'
