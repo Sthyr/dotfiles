@@ -10,22 +10,12 @@
 
 (fset 'yes-or-no-p 'y-or-n-p) ; Confirmation dialog uses y/n instead of yes/no
 
-;; Theme conf
-(require-theme 'modus-themes)
-
-(setq modus-themes-mode-line '(accented borderless padded))
-
-(load-theme 'modus-vivendi-tinted t)
-
 ;; Packages
 
 (require 'package)
 
 ;; There should be a way to add the repos I need without modifying the entire repo archive
-(add-to-list 'package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-(package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
