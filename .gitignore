@@ -9,6 +9,13 @@ zsh/.config/zsh/.zcompdump
 auto-save-list
 tramp
 .\#*
+elpa/
+games
+*.db
+themes/
+transient/
+bookmarks
+*cache
 
 # Org-mode
 .org-id-locations
