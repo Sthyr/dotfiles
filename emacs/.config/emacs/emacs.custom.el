@@ -4,6 +4,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(confirm-kill-emacs 'y-or-n-p)
  '(custom-enabled-themes '(ef-night))
  '(custom-safe-themes
    '("6a95b0faf6cee6adfda34cdfadb2fed6f4157a1d49aabef8cc9b94c187d69a1d"
@@ -15,10 +16,7 @@
      "2c7dc80264de0ba9409d4ebb3c7b31cf8e4982015066174c786f16a672db71b2"
      default))
  '(inhibit-startup-screen t)
- '(package-selected-packages '(ef-themes)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+ '(package-selected-packages
+   '(company ef-themes jinx magit marginalia mixed-pitch orderless
+	     org-modern org-roam transient undo-tree vertico)))
+
