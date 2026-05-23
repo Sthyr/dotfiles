@@ -57,5 +57,10 @@ export PATH="$PATH:/home/sthyr/.local/bin"
 
 . "$HOME/.local/share/../bin/env"
 
+# TexLive variables
+export MANPATH="$MANPATH:/usr/local/texlive/2026/texmf-dist/doc/man"
+export INFOPATH="$INFOPATH:/usr/local/texlive/2026/texmf-dist/doc/info"
+export PATH="$PATH:/usr/local/texlive/2026/bin/x86_64-linux"
+
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
