@@ -4,6 +4,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(TeX-view-program-selection
+   '(((output-dvi has-no-display-manager) "dvi2tty")
+     ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
+     (output-pdf "xdg-open") (output-html "xdg-open")))
  '(confirm-kill-emacs 'y-or-n-p)
  '(custom-enabled-themes '(ef-night))
  '(custom-safe-themes
@@ -17,6 +21,13 @@
      default))
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(company ef-themes jinx magit marginalia mixed-pitch orderless
-	     org-modern org-roam transient undo-tree vertico)))
+   '(auctex cdlatex company ef-themes jinx magit marginalia mixed-pitch
+	    orderless org-modern org-roam org-table preview transient
+	    undo-tree vertico xenops yasnippet)))
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

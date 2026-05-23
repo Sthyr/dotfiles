@@ -133,6 +133,9 @@
 
 (variable-pitch-mode 1)
 
+(use-package org
+  :custom (org-pretty-entities t))
+
 (use-package org-modern
   :hook ((org-mode . org-modern-mode)
 	 (org-agenda-finalize . org-modern-agenda))
@@ -159,3 +162,15 @@
   (org-roam-db-autosync-mode)
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
+
+;;; Latex config
+
+;; AucTeX settings - almost no changes
+(use-package latex
+  :ensure auctex)
+
+(use-package xenops
+  :hook ((latex-mode . xenops-mode)
+	 (LaTex-mode . xenops-mode)
+	 (org-mode . xenops-mode))
+  )
