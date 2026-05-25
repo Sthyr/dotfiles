@@ -29,7 +29,8 @@ bookmarks
 /eshell/lastdir
 
 # elpa packages
-/elpa/
+*/elpa/
+*/eln-cache/
 
 # reftex files
 *.rel
