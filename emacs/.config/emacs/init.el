@@ -1,7 +1,5 @@
-(eval-and-compile
-  (setq use-package-always-ensure t
-        use-package-expand-minimally t))
-(setq package-install-upgrade-built-in t)
+(with-eval-after-load 'package
+   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 (setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
                        (getenv "PATH")))
@@ -11,9 +9,85 @@
 (set-face-attribute 'fixed-pitch nil :font "Iosevka Slab")
 (set-face-attribute 'variable-pitch nil :font "Iosevka Etoile" :weight 'medium)
 
-(scroll-bar-mode -1)
-(column-number-mode -1) ;; Show the number in the modeline 
-(global-display-line-numbers-mode) ;; Show line number in buffer, prefix with global- to show numbers on evert buffer
+
+;; Automatically reread from disk if the underlying file changes
+(setopt auto-revert-avoid-polling t)
+;; Some systems don't do file notifications well; see
+;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+(global-auto-revert-mode)
+
+;; Save history of mini buffer
+(savehist-mode)
+
+;; Fix archaic defaults
+(setopt sentence-end-double-space nil)
+
+;; Make right-click do something sensible
+(when (display-graphic-p)
+  (context-menu-mode))
+
+;; Don't litter file system with *~ backup files; put them all inside
+;; ~/.emacs.d/backup or wherever
+(defun bedrock--backup-file-name (fpath)
+  "Return a new file path of a given file path.
+If the new path's directories does not exist, create them."
+  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath))
+(setopt make-backup-file-name-function 'bedrock--backup-file-name)
+
+;; Show the help buffer after startup
+(add-hook 'after-init-hook 'help-quick)
+
+;; Minibuffer
+(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
+(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+(setopt completions-detailed t)                        ; Show annotations
+(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
+(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+
+(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
+(setopt completions-max-height 20)                     ; This is arbitrary
+(setopt completions-format 'one-column)
+(setopt completions-group t)
+(setopt completion-auto-select 'second-tab)            ; Much more eager
+;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+
+;; Interface
+;; Mode line information
+(setopt line-number-mode t)                        ; Show current line in modeline
+(setopt column-number-mode t)                      ; Show column as well
+
+(setopt x-underline-at-descent-line nil)           ; Prettier underlines
+(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+
+(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
+(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+
+;; Enable horizontal scrolling
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-flip-direction t)
+
+;; Misc. UI tweaks
+(blink-cursor-mode -1)                                ; Steady cursor
+(pixel-scroll-precision-mode)                         ; Smooth scrolling
+
+;; Display line numbers in programming mode
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(setopt display-line-numbers-width 3)           ; Set a minimum width
+
+;; Nice line wrapping when working with text
+(add-hook 'text-mode-hook 'visual-line-mode)
+
+;; Modes to highlight the current line with
+(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
 ;; Writing config
 
@@ -22,17 +96,9 @@
 (setq-default scroll-error-top-bottom t)
 (setq save-interprogram-paste-before-kill t)
 
-;; Packages
-(require 'package)
-(setq package-install-upgrade-built-in t)
-(use-package package
-  :config
-  (add-to-list 'package-archives
-	       '("melpa" . "https://melpa.org/packages/"))
-  (package-initialize))
-
 ;; Spell checking
 (use-package jinx
+  :ensure t
   :hook (emacs-startup . global-jinx-mode)
   :bind (("C-;" . jinx-correct)
 	 ("C-M-;" . jinx-languages))
@@ -42,6 +108,7 @@
 
 ;; Auto Completion
 (use-package company
+  :ensure t
   :hook (after-init . global-company-mode)
   :custom
   (company-minimum-prefix-length 3)
@@ -51,18 +118,20 @@
 
 ;; Improve keyboard shortcut discoverability
 (use-package which-key
+  :ensure t
   :config
-  (which-key-mode)
-  (which-key-setup-side-window-right))
+  (which-key-mode))
 
 ;;; Minibuffer completion
 
 ;; Enable vertico
 (use-package vertico
+  :ensure t
   :init
   (vertico-mode))
 
 (use-package ef-themes
+  :ensure t
   :init (ef-themes-take-over-modus-themes-mode 1)
   :config
   ;; All customisations here.
@@ -73,6 +142,7 @@
 
 ;; Buffer completion on any order
 (use-package orderless
+  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles partial-completion))))
@@ -80,10 +150,12 @@
 
 ;; Add info of the commands in the completion buffer
 (use-package marginalia
+  :ensure t
   :init
   (marginalia-mode))
 
 (use-package org
+  :ensure t
   :custom (org-pretty-entities t))
 
 (use-package org-modern
@@ -95,6 +167,7 @@
   )
 
 (use-package org-roam
+  :ensure t
   :custom
   (org-roam-directory (file-truename "~/Documents/RoamNotes/"))
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -111,22 +184,6 @@
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(auctex company ef-themes jinx lsp-latex lsp-mode magic magit
-	    marginalia orderless org-modern org-roam vertico xenops)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 ;;; Latex config
 
 ;; AucTeX settings - almost no changes
@@ -140,31 +197,4 @@
 	 (org-mode . xenops-mode))
   )
 
-
-;;; Programing config
-
-(use-package magit
-  :ensure t)
-
-(use-package lsp-mode
-  :ensure t
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (prog-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
-
-;; Latex support
-
-(use-package lsp-latex
-  :ensure t
-  :after lsp-mode
-  ;; Uncomment and set path if texlab is not in exec-path:
-  :custom (lsp-latex-texlab-executable "/usr/bin/texlab")
-  :hook ((tex-mode    . lsp)
-         (latex-mode  . lsp)
-         (yatex-mode  . lsp)
-         (bibtex-mode . lsp)))
+(setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))
