@@ -181,7 +181,7 @@ If the new path's directories does not exist, create them."
   :ensure t
   :hook (after-init . global-company-mode)
   :custom
-  (company-minimum-prefix-length 3)
+  (company-minimum-prefix-length 5) ; cdlatex abrev. use 3 characters, if company prefix is 3 it will take precedence over latex TODO: find a way to better handle this situation
   (company-dabbrev-minimum-length 8)
   (company-selection-wrap-around t)
   )
@@ -261,7 +261,7 @@ If the new path's directories does not exist, create them."
 
 (use-package org
   :ensure t
-  :custom (org-pretty-entities t))
+  :custom (org-pretty-entities nil))
 
 (use-package org-modern
   :ensure t
@@ -300,6 +300,7 @@ If the new path's directories does not exist, create them."
   :ensure t)
 (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)   ; with AUCTeX LaTeX mode
 (add-hook 'latex-mode-hook #'turn-on-cdlatex)   ; with Emacs latex mode
+(add-hook 'org-mode-hook #'turn-on-org-cdlatex) ; with org mode
 
 (use-package xenops
   :ensure t
@@ -408,10 +409,10 @@ If the new path's directories does not exist, create them."
   :ensure t
   ;; By default, tempel looks at the file "templates" in
   ;; user-emacs-directory, but you can customize that with the
-  ;; tempel-path variable:
+  ;; tempel-path variable:z
   ;; :custom
   ;; (tempel-path (concat user-emacs-directory "custom_template_file"))
-  :bind (("M-*" . tempel-insert)
+  :bind (("M-´" . tempel-insert)
          ("M-+" . tempel-complete)
          :map tempel-map
          ("C-c RET" . tempel-done)
@@ -430,16 +431,45 @@ If the new path's directories does not exist, create them."
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
 
+;; Autosave
+(use-package buffer-guardian
+  :ensure t
+  :custom
+  ;; When non-nil, include remote files in the auto-save process
+  (buffer-guardian-inhibit-saving-remote-files t)
+
+  ;; When non-nil, buffers visiting nonexistent files are not saved
+  (buffer-guardian-inhibit-saving-nonexistent-files nil)
+
+  ;; Save the buffer even if the window change results in the same buffer
+  (buffer-guardian-save-on-same-buffer-window-change t)
+
+  ;; Non-nil to enable verbose mode to log when a buffer is automatically saved
+  (buffer-guardian-verbose nil)
+
+  ;; Pre-save all package-managed buffers before native save commands run
+  ;; Advise `save-some-buffers' to use `buffer-guardian' logic.
+  ;; When non-nil and `buffer-guardian-mode' is active, this intercepts
+  ;; `save-some-buffers' to silently pre-save package-managed buffers before
+  ;; allowing the native command to run normally.
+  (buffer-guardian-override-save-some-buffers nil)
+
+  ;; Save all buffers after N seconds of user idle time. (Disabled by default)
+  ;; (buffer-guardian-save-all-buffers-idle 30)
+
+  ;; Save all buffers every N seconds. (Disabled by default)
+  ;; (setq buffer-guardian-save-all-buffers-interval (* 60 30))
+
+  :hook
+  (after-init . buffer-guardian-mode))
+
 (setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(cdlatex company corfu corfu-terminal ef-themes embark-consult jinx
-	     json-mode lsp-latex magit marginalia orderless org-modern
-	     org-roam tempel vertico xenops yaml-mode)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
