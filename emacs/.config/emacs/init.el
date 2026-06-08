@@ -129,8 +129,8 @@ If the new path's directories does not exist, create them."
          ("M-s e" . consult-isearch-history) ; orig. isearch-edit-string
          ("M-s l" . consult-line)            ; needed by consult-line to detect isearch
          ("M-s L" . consult-line-multi)      ; needed by consult-line to detect isearch
-         )
-  :config
+         ) 
+ :config
   ;; Narrowing lets you restrict results to certain groups of candidates
   (setq consult-narrow-key "<"))
 
@@ -159,6 +159,8 @@ If the new path's directories does not exist, create them."
   ;; candidate you select
   (setf (alist-get ?. avy-dispatch-alist) 'bedrock/avy-action-embark))
 
+
+
 ;; Writing config
 
 (add-hook 'text-mode-hook 'visual-line-mode)
@@ -177,14 +179,14 @@ If the new path's directories does not exist, create them."
   )
 
 ;; Auto Completion
-(use-package company
-  :ensure t
-  :hook (after-init . global-company-mode)
-  :custom
-  (company-minimum-prefix-length 3)
-  (company-dabbrev-minimum-length 8)
-  (company-selection-wrap-around t)
-  )
+;(use-package company
+;  :ensure t
+;  :hook (after-init . global-company-mode)
+;   :custom
+;  (company-minimum-prefix-length 3)
+;  (company-dabbrev-minimum-length 8)
+;  (company-selection-wrap-around t)
+;  )
 
 ;; Improve keyboard shortcut discoverability
 (use-package which-key
@@ -258,6 +260,22 @@ If the new path's directories does not exist, create them."
   :ensure t
   :config
   (corfu-terminal-mode))
+
+;; Fancy completion-at-point functions; there's too much in the cape package to
+;; configure here; dive in when you're comfortable!
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file))
+
+;; Pretty icons for corfu
+(use-package kind-icon
+  :if (display-graphic-p)
+  :ensure t
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 (use-package org
   :ensure t
@@ -339,6 +357,13 @@ If the new path's directories does not exist, create them."
   (when (>= emacs-major-version 30)
     (project-mode-line t)))         ; show project name in modeline
 
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Version Control
@@ -384,8 +409,8 @@ If the new path's directories does not exist, create them."
   ;; no :ensure t here because it's built-in
 
   ;; Configure hooks to automatically turn-on eglot for selected modes
-  ; :hook
-  ; (((python-mode ruby-mode elixir-mode) . eglot-ensure))
+  :hook
+  (((python-mode ruby-mode elixir-mode) . eglot-ensure))
   
   :custom
   (eglot-send-changes-idle-time 0.1)
@@ -437,9 +462,10 @@ If the new path's directories does not exist, create them."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(cdlatex company corfu corfu-terminal ef-themes embark-consult jinx
-	     json-mode lsp-latex magit marginalia orderless org-modern
-	     org-roam tempel vertico xenops yaml-mode)))
+   '(cape cdlatex company corfu-terminal ef-themes embark-consult ht jinx
+	  json-mode kind-icon lv magit marginalia markdown-mode
+	  mixed-pitch orderless org-modern org-roam projectile spinner
+	  tempel undo-tree vertico xenops yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
