@@ -293,8 +293,18 @@ If the new path's directories does not exist, create them."
 
 ;; AucTeX settings - almost no changes
 (add-hook 'LaTeX-mode-hook 'prettify-symbols-mode)
+
+;; Use pdf tools to view pdfs inside emacs
+'(TeX-view-program-selection
+   '(((output-dvi has-no-display-manager) "dvi2tty")
+     ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
+     (output-pdf "PDF Tools") (output-html "xdg-open")))
+
+;; Use synctex
+'(TeX-source-correlate-mode t)
 (use-package latex
-  :ensure auctex)
+  :ensure auctex
+  )
 
 (use-package cdlatex
   :ensure t)
@@ -463,13 +473,26 @@ If the new path's directories does not exist, create them."
   :hook
   (after-init . buffer-guardian-mode))
 
+;; PDF TOOLS
+(use-package pdf-tools
+  :ensure t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  )
+
 (setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(buffer-guardian cdlatex company corfu-terminal ef-themes
+		     embark-consult jinx json-mode lsp-latex magit
+		     marginalia orderless org-modern org-roam
+		     pdf-tools tempel vertico xenops yaml-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
