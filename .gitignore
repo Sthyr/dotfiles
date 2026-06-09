@@ -14,8 +14,11 @@ games
 *.db
 themes/
 transient/
+experiments/
 bookmarks
 *cache
+history
+projectile*
 
 # Org-mode
 .org-id-locations
