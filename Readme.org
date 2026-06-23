@@ -1,0 +1,51 @@
+* My personal config
+
+I try to follow the [[https://wiki.archlinux.org/title/XDG_Base_Directory#User_directories][XDG Base Directory specification]] whenever I can.
+Since I use Zsh all my env variables are defined in ~etc/zsh/zshenv~
+It may not be the best place but so far I have not encounter any problems.
+
+#+begin_src sh
+# XDG environment variables
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# Zsh variables
+export ZDOTDIR="$HOME"/.config/zsh
+export HISTFILE="$XDG_STATE_HOME"/zsh/history
+
+# Rust
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+
+# Renpy
+export RENPY_PATH_TO_SAVES="$XDG_DATA_HOME"
+
+# Editor
+export EDITOR=helix
+
+# GTK-2
+export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+
+# GnuPg
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+
+# Cuda
+export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
+#+end_src
+
+** Requirements
+- GNU Stow
+- KDE Plasma
+- Kitty
+** Configuration
+For ~Kanata~ I use a
+Follow this [[https://shom.dev/start/using-kanata-to-remap-any-keyboard/#permissions][kanata guide]]. I no longer use Katana since I own a programmable keyboard and I edit the keys with either Vial or ZMK.
+
+My emacs has two config files, ~init.el~ and ~emacs.custom.el~, those are for manually edited config and use of the *customize-* function, respectively.
+I'm moving all of my emacs config to a literate programming config using org mode. Now I only export to one ~init.el~ file.
+** TODO Ideas I'd like to explore
+- I want to theme my kde plasma desktop like [[https://github.com/0xSolanaceae/caelestia-dots-kde][Caelestia Dots KDE]]
+- [[https://noctalia.dev/][Noctalia]] looks pretty good, I have to try it on Niri
+  
