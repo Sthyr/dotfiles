@@ -1,0 +1,8 @@
+fundamental-mode
+(sq "\\sqrt[" p "]{" q "}")
+(po "" p "^{" q "}")
+
+org-mode
+(ec "#+BEGIN_SRC emacs-lisp"n>
+    q n>
+    "#+END_SRC")
