@@ -1,6 +1,15 @@
 fundamental-mode
+(x "\\times ")
 (sq "\\sqrt[" p "]{" q "}")
 (po "" p "^{" q "}")
+(te "\\text{" q "}")
+(fr "\\frac{" p  "}{" q  "}")
+(over "\\overline{" q  "}")
+(box
+"\\begin{align*}"n
+"\\boxed{"n
+	q n
+"}\\end{align*}")
 
 org-mode
 (ec "#+BEGIN_SRC emacs-lisp"n>

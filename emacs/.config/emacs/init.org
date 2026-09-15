@@ -3,33 +3,29 @@
 #+DESCRIPTION: My personal emacs config.
 #+PROPERTY: header-args :tangle init.el :mkdirp yes
 
-* Fundamental
-
-*** Add melpa
-'package-archives is a variable that contains all the sources to download packages, melpa is one the most famous repos.
+* Setup
+** Add packages
 
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'package
-   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+(with-eval-after-load 'package
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 #+END_SRC
 
-** Good defaults
+** Nice things to have
+*** Cua mode
+Use C-x, C-v, C-z, etc as in other apps intead of the emacs defaults
 #+BEGIN_SRC emacs-lisp
-;; Nice line wrapping when working with text
-(add-hook 'text-mode-hook 'visual-line-mode)
+(cua-mode t)
 #+END_SRC
 
-** Mouse
-*** Right click
+*** Right click menu
 By default nothing happens when I click right click on a buffer, with this setting now a popup menu is opened.
 #+BEGIN_SRC emacs-lisp
-;; Make right-click do something sensible
 (when (display-graphic-p)
   (context-menu-mode))
 #+END_SRC
 
-
-** Reload on file change
+*** Reload on file change
 #+BEGIN_SRC emacs-lisp
 ;; Automatically reread from disk if the underlying file changes
 (setopt auto-revert-avoid-polling t)
@@ -40,30 +36,48 @@ By default nothing happens when I click right click on a buffer, with this setti
 (global-auto-revert-mode)
 #+END_SRC
 
-* Minibuffer
-Most of this config comes from [[https://codeberg.org/ashton314/emacs-bedrock/][emacs-bedrock]].
+* Fundamental
+** Font
+The font and style of the font are determinated by the face, each comment, code, header, latex code, etc uses a different font face.
+`default': The face uses by default
+`fixed-pitch': monospace font. Each character uses the same space
+`variable-pitch': The characters have different spaces, different width.
+Emacs always uses the default face unless we explicity decided which font to use on each case(a face for comments, another for code, etc.)
 #+BEGIN_SRC emacs-lisp
-;; Minibuffer
-(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
-(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
-(setopt completions-detailed t)                        ; Show annotations
-(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
-(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
-
-(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
-(setopt completions-max-height 20)                     ; This is arbitrary
-(setopt completions-format 'one-column)
-(setopt completions-group t)
-(setopt completion-auto-select 'second-tab)            ; Much more eager
-;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
-
-(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+      (set-face-attribute 'default nil
+      		    :family "Iosevka"
+      		    ;; Height = point size * 10
+      		    :height 180
+      		    :weight 'Regular)
+      (set-face-attribute 'fixed-pitch nil
+    		      :family "Iosevka"
+  		    :height 180)
+      (set-face-attribute 'variable-pitch nil
+      		    :family "Iosevka Etoile"
+      		    :height 180)
 #+END_SRC
 
+I want to use variable pitch fonts when in a buffer with text-mode enabled
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook #'variable-pitch-mode)
+#+END_SRC
+
+** Theme
+The modus themes are among my favorites, but lately I found that the ef themes looks beautiful.
+#+BEGIN_SRC emacs-lisp
+(use-package ef-themes
+  :ensure t
+  :init (ef-themes-take-over-modus-themes-mode 1)
+  :config
+  ;; All customisations here.
+  (setq modus-themes-mixed-fonts t) ;; This uses the monospace(fixed-pitch) font in things such as tables, etc.
+  (setq modus-themes-italic-constructs t)
+  (modus-themes-load-theme 'ef-night)
+  )
+#+END_SRC
+
+
 ** Vertico
-:PROPERTIES:
-:ID:       0f6e3744-3a34-417e-afc1-ca9b5af13370
-:END:
 Nice UI for the minibuffer
 #+BEGIN_SRC emacs-lisp
 ;; Enable vertico
@@ -73,14 +87,7 @@ Nice UI for the minibuffer
   (vertico-mode))
 #+END_SRC
 
-#+DOWNLOADED: screenshot @ 2026-06-14 19:30:44
-[[file:Minibuffer/2026-06-14_19-30-44_screenshot.png]]
-
-
 ** Marginalia
-:PROPERTIES:
-:ID:       4c4396b1-443f-4698-9dc9-adaf06dbfec1
-:END:
 Add a short description and the default keybinding of every command in the minibuffer
 #+BEGIN_SRC emacs-lisp
 ;; Add info of the commands in the completion buffer
@@ -89,17 +96,6 @@ Add a short description and the default keybinding of every command in the minib
   :init
   (marginalia-mode))
 #+END_SRC
-
-#+DOWNLOADED: screenshot @ 2026-06-14 19:43:03
-[[file:Minibuffer/2026-06-14_19-43-03_screenshot.png]]
-
-** Consult
-Many people recommends using consult along with vertico, embark and marginalia.
-I don't fully understand Consult, so I will avoid using it for now.
-
-** Embark
-Another must have according to everyone, I will delay it's use until I feel more confident about what default emacs can do.
-[[https://karthinks.com/software/fifteen-ways-to-use-embark/][Fifteen ways to use Embark]]
 
 ** Orderless search
 Search commands in any order. Great for discoverability.
@@ -123,50 +119,8 @@ This is one of the most useful packages. If I want to find a file I run C-x C-f,
   :config
   (which-key-mode))
 #+END_SRC
-* UI
-** Theme
-The modus themes are among my favorites, but lately I found that the ef themes looks beautiful.
-#+BEGIN_SRC emacs-lisp
-(use-package ef-themes
-  :ensure t
-  :init (ef-themes-take-over-modus-themes-mode 1)
-  :config
-  ;; All customisations here.
-  (setq modus-themes-mixed-fonts t)
-  (setq modus-themes-italic-constructs t)
-  (modus-themes-load-theme 'ef-night)
-  )
-#+END_SRC
-
-** Fonts
-I like to use the Iosevka fonts, Iosevka Slab for coding and Iosevka Etoile for writing.
-
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka Slab" :height 200)
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Slab")
-(set-face-attribute 'variable-pitch nil :font "Iosevka Etoile" :weight 'medium)
-#+END_SRC
-
-* Nice to have
 
 ** Autosave
-I don't really understand the autosave function of emacs, but I have found a great package that autosaves every buffer.
-
-I don't know if I should keep this function since I use guardian-buffer, I'll work on this later.
-#+BEGIN_SRC emacs-lisp
-;; Don't litter file system with *~ backup files; put them all inside
-;; ~/.emacs.d/backup or wherever
-(defun bedrock--backup-file-name (fpath)
-  "Return a new file path of a given file path.
-If the new path's directories does not exist, create them."
-  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
-         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
-         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
-    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
-    backupFilePath))
-(setopt make-backup-file-name-function 'bedrock--backup-file-name)
-  #+END_SRC
-
   #+BEGIN_SRC emacs-lisp
   (use-package buffer-guardian
     :ensure t
@@ -200,20 +154,6 @@ If the new path's directories does not exist, create them."
     (after-init . buffer-guardian-mode))
 #+END_SRC
 
-** Spell checking
-Of all the spell checking packages, jinx seems to be among the best.
-#+BEGIN_SRC emacs-lisp
-;; Spell checking
-(use-package jinx
-  :ensure t
-  :hook (emacs-startup . global-jinx-mode)
-  :bind (("C-;" . jinx-correct)
-	 ("C-M-;" . jinx-languages))
-  :custom
-  (jinx-languages "en_US es_CL")
-  )
-#+END_SRC
-
 * Code
 ** Templates
 #+BEGIN_SRC emacs-lisp
@@ -242,51 +182,43 @@ Of all the spell checking packages, jinx seems to be among the best.
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 #+END_SRC
+* Latex
+** Load latex directory
+#+BEGIN_SRC emacs-lisp
+(setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
+                       (getenv "PATH")))
+(add-to-list 'exec-path "/usr/local/texlive/2026/bin/x86_64-linux/")
+#+END_SRC
 * Org mode
+** Default org mode settings
 #+BEGIN_SRC emacs-lisp
-(use-package org
-  :ensure t
-  :custom (org-pretty-entities t))
+  ;; Where to store my agenda files
+  (setq org-agenda-files '("~/org"))
+
+  ;; Record a timestamp when a TODO is set to a done state
+  (setq org-log-done 'time)
+
+  ;; Follow links
+  (setq org-return-follows-link t)
+
+  ;; Indent headings
+  ;; * Heading 1
+  ;;  ** Heading 2
+  ;;   *** Heading 3
+  (add-hook 'org-mode-hook 'org-indent-mode)
+
+  ;; Wrap lines in org mode. I don't have to scroll horizontally to see the text at the end of each line
+  (add-hook 'org-mode-hook 'visual-line-mode)
 #+END_SRC
-** Roam
-Org-roam is like Roam Research but withing emacs.
+** Capture templates
+*** Journal
 #+BEGIN_SRC emacs-lisp
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/Documents/RoamNotes/"))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
-  :config
-  ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
-  (require 'org-roam-protocol))
+            (setq org-capture-templates
+                  '(
+  		  ("j" "Journal Entry"
+          	  entry (file+datetree "~/org/journal.org")
+        	  "* %?"
+      	  :empty-lines 0)
+    	      ))
 #+END_SRC
-** Nice org utilities
-org-download can copy images from the clipboard to the org buffer.
-It requires to have ~wl-clipboard~ installed in the system.
-#+BEGIN_SRC emacs-lisp
-;; Download images
-(use-package org-download
-  :ensure t
-  :custom (add-hook 'dired-mode-hook . 'org-download-enable)
-  )
-#+END_SRC
-** Better UI
-#+BEGIN_SRC emacs-lisp
-  (use-package org-modern
-    :ensure t
-    :hook ((org-mode . org-modern-mode)
-  	 (org-agenda-finalize . org-modern-agenda))
-)
- ;   :custom
- ;   (set-face-attribute 'org-modern-symbol nil :family "Iosevka")
- ;   )
-#+END_SRC
+

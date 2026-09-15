@@ -1,10 +1,8 @@
 (with-eval-after-load 'package
- (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-;; Nice line wrapping when working with text
-(add-hook 'text-mode-hook 'visual-line-mode)
+(cua-mode t)
 
-;; Make right-click do something sensible
 (when (display-graphic-p)
   (context-menu-mode))
 
@@ -16,21 +14,29 @@
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
 
-;; Minibuffer
-(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
-(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
-(setopt completions-detailed t)                        ; Show annotations
-(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
-(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+(set-face-attribute 'default nil
+		    :family "Iosevka"
+		    ;; Height = point size * 10
+		    :height 180
+		    :weight 'Regular)
+(set-face-attribute 'fixed-pitch nil
+		      :family "Iosevka"
+		    :height 180)
+(set-face-attribute 'variable-pitch nil
+		    :family "Iosevka Etoile"
+		    :height 180)
 
-(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
-(setopt completions-max-height 20)                     ; This is arbitrary
-(setopt completions-format 'one-column)
-(setopt completions-group t)
-(setopt completion-auto-select 'second-tab)            ; Much more eager
-;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+(add-hook 'text-mode-hook #'variable-pitch-mode)
 
-(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+(use-package ef-themes
+  :ensure t
+  :init (ef-themes-take-over-modus-themes-mode 1)
+  :config
+  ;; All customisations here.
+  (setq modus-themes-mixed-fonts t) ;; This uses the monospace(fixed-pitch) font in things such as tables, etc.
+  (setq modus-themes-italic-constructs t)
+  (modus-themes-load-theme 'ef-night)
+  )
 
 ;; Enable vertico
 (use-package vertico
@@ -56,32 +62,6 @@
   :ensure t
   :config
   (which-key-mode))
-
-(use-package ef-themes
-  :ensure t
-  :init (ef-themes-take-over-modus-themes-mode 1)
-  :config
-  ;; All customisations here.
-  (setq modus-themes-mixed-fonts t)
-  (setq modus-themes-italic-constructs t)
-  (modus-themes-load-theme 'ef-night)
-  )
-
-(set-face-attribute 'default nil :font "Iosevka Slab" :height 200)
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Slab")
-(set-face-attribute 'variable-pitch nil :font "Iosevka Etoile" :weight 'medium)
-
-;; Don't litter file system with *~ backup files; put them all inside
-;; ~/.emacs.d/backup or wherever
-(defun bedrock--backup-file-name (fpath)
-  "Return a new file path of a given file path.
-If the new path's directories does not exist, create them."
-  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
-         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
-         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
-    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
-    backupFilePath))
-(setopt make-backup-file-name-function 'bedrock--backup-file-name)
 
 (use-package buffer-guardian
   :ensure t
@@ -114,16 +94,6 @@ If the new path's directories does not exist, create them."
   :hook
   (after-init . buffer-guardian-mode))
 
-;; Spell checking
-(use-package jinx
-  :ensure t
-  :hook (emacs-startup . global-jinx-mode)
-  :bind (("C-;" . jinx-correct)
-	 ("C-M-;" . jinx-languages))
-  :custom
-  (jinx-languages "en_US es_CL")
-  )
-
 (use-package tempel
   :ensure t
   ;; By default, tempel looks at the file "templates" in
@@ -149,39 +119,32 @@ If the new path's directories does not exist, create them."
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-(use-package org
-  :ensure t
-  :custom (org-pretty-entities t))
+(setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
+                       (getenv "PATH")))
+(add-to-list 'exec-path "/usr/local/texlive/2026/bin/x86_64-linux/")
 
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/Documents/RoamNotes/"))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
-  :config
-  ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
-  (require 'org-roam-protocol))
+;; Where to store my agenda files
+(setq org-agenda-files '("~/org"))
 
-;; Download images
-(use-package org-download
-  :ensure t
-  :custom (add-hook 'dired-mode-hook . 'org-download-enable)
-  )
+;; Record a timestamp when a TODO is set to a done state
+(setq org-log-done 'time)
 
-(use-package org-modern
-    :ensure t
-    :hook ((org-mode . org-modern-mode)
-  	 (org-agenda-finalize . org-modern-agenda))
-)
- ;   :custom
- ;   (set-face-attribute 'org-modern-symbol nil :family "Iosevka")
- ;   )
+;; Follow links
+(setq org-return-follows-link t)
+
+;; Indent headings
+;; * Heading 1
+;;  ** Heading 2
+;;   *** Heading 3
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+;; Wrap lines in org mode. I don't have to scroll horizontally to see the text at the end of each line
+(add-hook 'org-mode-hook 'visual-line-mode)
+
+(setq org-capture-templates
+        '(
+	  ("j" "Journal Entry"
+	  entry (file+datetree "~/org/journal.org")
+	  "* %?"
+:empty-lines 0)
+    ))
