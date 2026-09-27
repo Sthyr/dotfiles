@@ -52,11 +52,6 @@ alias ls='ls --color'
 alias hx=helix
 alias update="yay && flatpak update"
 
-# Created by `pipx` on 2026-02-11 19:19:29
-export PATH="$PATH:/home/sthyr/.local/bin"
-
-. "$HOME/.local/share/../bin/env"
-
 # TexLive variables
 export MANPATH="$MANPATH:/usr/local/texlive/2026/texmf-dist/doc/man"
 export INFOPATH="$INFOPATH:/usr/local/texlive/2026/texmf-dist/doc/info"
@@ -67,4 +62,3 @@ source /etc/profile
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
-eval "$(direnv hook zsh)"
