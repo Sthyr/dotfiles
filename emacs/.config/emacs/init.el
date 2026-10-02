@@ -119,10 +119,6 @@
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-(setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
-                       (getenv "PATH")))
-(add-to-list 'exec-path "/usr/local/texlive/2026/bin/x86_64-linux/")
-
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
 

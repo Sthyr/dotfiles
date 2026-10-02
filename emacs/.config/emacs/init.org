@@ -183,12 +183,6 @@ This is one of the most useful packages. If I want to find a file I run C-x C-f,
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 #+END_SRC
 * Latex
-** Load latex directory
-#+BEGIN_SRC emacs-lisp
-(setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
-                       (getenv "PATH")))
-(add-to-list 'exec-path "/usr/local/texlive/2026/bin/x86_64-linux/")
-#+END_SRC
 * Org mode
 ** Default org mode settings
 #+BEGIN_SRC emacs-lisp
