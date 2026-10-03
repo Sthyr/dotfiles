@@ -4,6 +4,11 @@
 #+PROPERTY: header-args :tangle init.el :mkdirp yes
 
 * Setup
+** Add lexical binding
+I don't fully understand what it does
+#+BEGIN_SRC emacs-lisp
+;;; ...  -*- lexical-binding: t -*-
+#+END_SRC
 ** Add packages
 
 #+BEGIN_SRC emacs-lisp
@@ -183,6 +188,12 @@ This is one of the most useful packages. If I want to find a file I run C-x C-f,
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 #+END_SRC
 * Latex
+** AUCTeX
+#+BEGIN_SRC emacs-lisp
+  (use-package auctex
+    :ensure t)
+#+END_SRC
+
 * Org mode
 ** Default org mode settings
 #+BEGIN_SRC emacs-lisp

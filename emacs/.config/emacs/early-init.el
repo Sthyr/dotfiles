@@ -1,3 +1,5 @@
+;;; ...  -*- lexical-binding: t -*-
+
 ;; Startup speed, annoyance suppression
 (setq bedrock--initial-gc-threshold gc-cons-threshold)
 (setq gc-cons-threshold 10000000)

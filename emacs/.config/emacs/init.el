@@ -1,3 +1,5 @@
+;;; ...  -*- lexical-binding: t -*-
+
 (with-eval-after-load 'package
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
@@ -118,6 +120,9 @@
   ;; writing prose.
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
+
+(use-package auctex
+  :ensure t)
 
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
