@@ -1,4 +1,4 @@
-fundamental-mode
+latex-mode org-mode
 (x "\\times ")
 (sq "\\sqrt[" p "]{" q "}")
 (po "" p "^{" q "}")
@@ -10,6 +10,11 @@ fundamental-mode
 "\\boxed{"n
 	q n
 "}\\end{align*}")
+(m "$" q  "$")
+(im "$$" q "$$")
+
+
+
 
 org-mode
 (ec "#+BEGIN_SRC emacs-lisp"n>
