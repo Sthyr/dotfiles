@@ -119,9 +119,17 @@
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-(setenv "PATH" (concat "/usr/local/texlive/2026/bin/x86_64-linux/:"
-                       (getenv "PATH")))
-(add-to-list 'exec-path "/usr/local/texlive/2026/bin/x86_64-linux/")
+(use-package tex
+  :ensure auctex
+  :hook ((LaTeX-mode . turn-on-reftex)            ; referencias cruzadas
+         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF
+         (LaTeX-mode . visual-line-mode))         ; ajusta líneas largas
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-PDF-mode t)
+  (TeX-source-correlate-start-server t)
+  (reftex-plug-into-AUCTeX t))
 
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
