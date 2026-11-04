@@ -14,6 +14,8 @@
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
 
+(tab-bar-mode 1)
+
 (set-face-attribute 'default nil
 		    :family "Iosevka"
 		    ;; Height = point size * 10

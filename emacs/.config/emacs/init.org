@@ -35,7 +35,10 @@ By default nothing happens when I click right click on a buffer, with this setti
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
 #+END_SRC
-
+*** Tabs
+#+BEGIN_SRC emacs-lisp
+(tab-bar-mode 1)
+#+END_SRC
 * Fundamental
 ** Font
 The font and style of the font are determinated by the face, each comment, code, header, latex code, etc uses a different font face.
@@ -75,7 +78,6 @@ The modus themes are among my favorites, but lately I found that the ef themes l
   (modus-themes-load-theme 'ef-night)
   )
 #+END_SRC
-
 
 ** Vertico
 Nice UI for the minibuffer
