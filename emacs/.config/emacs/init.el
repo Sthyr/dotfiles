@@ -16,6 +16,8 @@
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
 
+(tab-bar-mode 1)
+
 (set-face-attribute 'default nil
 		    :family "Iosevka"
 		    ;; Height = point size * 10
@@ -121,8 +123,19 @@
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-(use-package auctex
-  :ensure t)
+
+(use-package tex
+  :ensure auctex
+  :hook ((LaTeX-mode . turn-on-reftex)            ; referencias cruzadas
+         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF
+         (LaTeX-mode . visual-line-mode))         ; ajusta líneas largas
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-PDF-mode t)
+  (TeX-source-correlate-start-server t)
+  (reftex-plug-into-AUCTeX t))
+>>>>>>> b6495408671d040ffb866a397cca4d6094944cc1
 
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
