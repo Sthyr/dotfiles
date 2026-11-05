@@ -123,7 +123,6 @@
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
-
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-reftex)            ; referencias cruzadas
@@ -135,7 +134,6 @@
   (TeX-PDF-mode t)
   (TeX-source-correlate-start-server t)
   (reftex-plug-into-AUCTeX t))
->>>>>>> b6495408671d040ffb866a397cca4d6094944cc1
 
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
