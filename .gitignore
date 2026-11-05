@@ -6,6 +6,7 @@ zsh/.config/zsh/.zcompdump
 /.emacs.desktop
 /.emacs.desktop.lock
 *.elc
+*.eld
 auto-save-list
 tramp
 .\#*
