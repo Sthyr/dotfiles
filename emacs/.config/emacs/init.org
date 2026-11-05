@@ -17,12 +17,6 @@ I don't fully understand what it does
 #+END_SRC
 
 ** Nice things to have
-*** Cua mode
-Use C-x, C-v, C-z, etc as in other apps intead of the emacs defaults
-#+BEGIN_SRC emacs-lisp
-(cua-mode t)
-#+END_SRC
-
 *** Right click menu
 By default nothing happens when I click right click on a buffer, with this setting now a popup menu is opened.
 #+BEGIN_SRC emacs-lisp
