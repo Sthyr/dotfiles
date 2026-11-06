@@ -127,14 +127,45 @@
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-reftex)            ; referencias cruzadas
-         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF
-         (LaTeX-mode . visual-line-mode))         ; ajusta líneas largas
+         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF (SyncTeX)
+         (LaTeX-mode . visual-line-mode)          ; ajusta líneas largas
+         (LaTeX-mode . (lambda () (variable-pitch-mode -1)))) ; código .tex en monoespaciada
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
-  (TeX-PDF-mode t)
   (TeX-source-correlate-start-server t)
-  (reftex-plug-into-AUCTeX t))
+  (reftex-plug-into-AUCTeX t)
+  ;; Visor por defecto; se alterna con C-c v
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  :config
+  ;; Recargar el PDF en pdf-tools después de compilar
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+
+  (defun sthyr/TeX-alternar-visor ()
+    "Alternar el visor PDF entre PDF Tools y Okular."
+    (interactive)
+    (let ((nuevo (if (equal (cadr (assq 'output-pdf TeX-view-program-selection))
+                            "PDF Tools")
+                     "Okular"
+                   "PDF Tools")))
+      (setq TeX-view-program-selection `((output-pdf ,nuevo)))
+      (message "Visor PDF: %s" nuevo)))
+
+  (with-eval-after-load 'latex
+    (keymap-set LaTeX-mode-map "C-c v" #'sthyr/TeX-alternar-visor)))
+
+(use-package pdf-tools
+  :ensure t
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install :no-query)) ; compila epdfinfo la primera vez
+
+(use-package eglot
+  :hook (LaTeX-mode . eglot-ensure)
+  :config
+  (add-to-list 'eglot-server-programs
+               '((LaTeX-mode :language-id "latex") . ("texlab"))))
 
 ;; Where to store my agenda files
 (setq org-agenda-files '("~/org"))
@@ -167,8 +198,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(auctex buffer-guardian ef-themes magit marginalia orderless tempel
-	    vertico)))
+   '(auctex buffer-guardian ef-themes magit marginalia orderless
+	    pdf-tools tempel vertico)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

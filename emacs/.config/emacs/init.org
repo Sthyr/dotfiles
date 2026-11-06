@@ -195,14 +195,50 @@ This is one of the most useful packages. If I want to find a file I run C-x C-f,
 (use-package tex
   :ensure auctex
   :hook ((LaTeX-mode . turn-on-reftex)            ; referencias cruzadas
-         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF
-         (LaTeX-mode . visual-line-mode))         ; ajusta líneas largas
+         (LaTeX-mode . TeX-source-correlate-mode) ; sincroniza código <-> PDF (SyncTeX)
+         (LaTeX-mode . visual-line-mode)          ; ajusta líneas largas
+         (LaTeX-mode . (lambda () (variable-pitch-mode -1)))) ; código .tex en monoespaciada
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
-  (TeX-PDF-mode t)
   (TeX-source-correlate-start-server t)
-  (reftex-plug-into-AUCTeX t))
+  (reftex-plug-into-AUCTeX t)
+  ;; Visor por defecto; se alterna con C-c v
+  (TeX-view-program-selection '((output-pdf "PDF Tools")))
+  :config
+  ;; Recargar el PDF en pdf-tools después de compilar
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+
+  (defun sthyr/TeX-alternar-visor ()
+    "Alternar el visor PDF entre PDF Tools y Okular."
+    (interactive)
+    (let ((nuevo (if (equal (cadr (assq 'output-pdf TeX-view-program-selection))
+                            "PDF Tools")
+                     "Okular"
+                   "PDF Tools")))
+      (setq TeX-view-program-selection `((output-pdf ,nuevo)))
+      (message "Visor PDF: %s" nuevo)))
+
+  (with-eval-after-load 'latex
+    (keymap-set LaTeX-mode-map "C-c v" #'sthyr/TeX-alternar-visor)))
+#+END_SRC
+
+** PDF-tools
+#+BEGIN_SRC emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  :magic ("%PDF" . pdf-view-mode)
+  :config
+  (pdf-tools-install :no-query)) ; compila epdfinfo la primera vez
+#+END_SRC
+** Eglot + texlab
+#+BEGIN_SRC emacs-lisp
+(use-package eglot
+  :hook (LaTeX-mode . eglot-ensure)
+  :config
+  (add-to-list 'eglot-server-programs
+               '((LaTeX-mode :language-id "latex") . ("texlab"))))
 #+END_SRC
 
 * Org mode
