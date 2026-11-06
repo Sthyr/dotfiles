@@ -121,6 +121,20 @@ This is one of the most useful packages. If I want to find a file I run C-x C-f,
   (which-key-mode))
 #+END_SRC
 
+** Corfu
+#+BEGIN_SRC emacs-lisp
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)          ; show the popup automatically while typing
+  (corfu-auto-delay 0.2)  ; wait 0.2 s before showing it
+  (corfu-auto-prefix 2)   ; start after 2 characters
+  (corfu-cycle t)         ; wrap around at the end of the list
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  :init
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)) ; show documentation next to the candidate
+#+END_SRC
 ** Autosave
   #+BEGIN_SRC emacs-lisp
   (use-package buffer-guardian

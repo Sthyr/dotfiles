@@ -65,6 +65,18 @@
   :config
   (which-key-mode))
 
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)          ; show the popup automatically while typing
+  (corfu-auto-delay 0.2)  ; wait 0.2 s before showing it
+  (corfu-auto-prefix 2)   ; start after 2 characters
+  (corfu-cycle t)         ; wrap around at the end of the list
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  :init
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)) ; show documentation next to the candidate
+
 (use-package buffer-guardian
   :ensure t
   :custom
@@ -198,7 +210,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(auctex buffer-guardian ef-themes magit marginalia orderless
+   '(auctex buffer-guardian corfu ef-themes magit marginalia orderless
 	    pdf-tools tempel vertico)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
